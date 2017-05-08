@@ -34,7 +34,7 @@
 	data-size="large"
 	data-button-type="continue_with"
 	data-show-faces="false"
-	data-scope="public_profile,email,publish_actions"
+	data-scope="public_profile,email,publish_actions,user_birthday"
 	data-onlogin="checkLoginState()"
 	data-auto-logout-link="false"
 	data-use-continue-as="false"
@@ -50,21 +50,19 @@
 
 	
 	
-	function testAPI() {
-    FB.api('/me', function(response) {
-      var uid = response.id;
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';  
-      document.getElementById('display_photo').src =
-    	  'http://graph.facebook.com/'+uid+'/picture?type=square';    	  
-    })
-	}
 	
 
  	function statusChangeCallback(response) {
 	FB.login(function(response) {
 	    if (response.status === 'connected') {
-	    	testAPI();
+	    	FB.api('/me',{fields:"last_name,name,gender,birthday,email"}, function(response) {
+	    	      var uid = response.id;
+	    	      document.getElementById('birthday').innerHTML = response.birthday;
+	    	      document.getElementById('gender').innerHTML = response.gender;
+	    	      document.getElementById('email').innerHTML = response.email;	    	      
+	    	      document.getElementById('status').innerHTML ='Thanks for logging in, ' + response.name + '!';  
+	    	      document.getElementById('display_photo').src ='http://graph.facebook.com/'+uid+'/picture?type=square';  
+	    	})
 	    	
 	    }
 	    else {
@@ -81,7 +79,6 @@
  	
 	function publish_message(){
 		var msg = document.getElementById('textid').value;
-		console.log(msg);
 		FB.login(function(){
 			FB.api('/me/feed', 'post', {message: msg }, function(resp){
 				if(resp.error){
@@ -93,7 +90,7 @@
 					}
 			}); 
 			}, {scope: 'publish_actions'});
-		
+	
 	}
 	
 
@@ -102,9 +99,21 @@
 
 <div id="status">
 </div>
-
 <br>
 <br>
+<div id="gender">
+</div>
+<br>
+<br>
+<div id="birthday">
+</div>
+<br>
+<br>
+<div id="email">
+</div>
+<div>
+<img src=""  id= "display_photo">
+</div>
 <br>
 <br>
 
@@ -121,13 +130,6 @@
 
 <div id= "succcess">
 </div>
-
-
-
-<div>
-<img src=""  id= "display_photo">
-</div>
-
 
 </body>
 </html>
